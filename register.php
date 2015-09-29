@@ -1,17 +1,16 @@
-<?php require 'include/header.php'; ?>
-
 <?php
+require_once 'include/functions.php';
 if(!empty($_POST)){
     $errors = array();
     require_once 'include/db.php';
 
     if(empty($_POST['username']) || !preg_match('/^[a-zA-Z0-9]+$/', $_POST['username'])){
-        $errors['username'] = "Pseudo invalide (Le pseudo ne doit contenir que des chiffres et des lettres sans espaces";
+        $errors['username'] = "Pseudo invalide (Le pseudo ne doit contenir que des chiffres et des lettres sans espaces et sans '-_$/:')";
     } else {
         $req = $pdo->prepare('SELECT id FROM users WHERE username = ?');
         $req->execute([$_POST['username']]);
         $user = $req->fetch();
-        debug($user);
+
         if($user){
             $errors['username'] = 'Ce pseudo est déjà utilisé';
         }
@@ -23,9 +22,9 @@ if(!empty($_POST)){
         $req = $pdo->prepare('SELECT id FROM users WHERE email = ?');
         $req->execute([$_POST['email']]);
         $user = $req->fetch();
-        debug($user);
+
         if ($user) {
-            $errors['email'] = 'Cet email a déjà été utilisé';
+            $errors['email'] = 'Cet email à déjà été utilisé';
         }
     }
 
@@ -34,19 +33,34 @@ if(!empty($_POST)){
     }
 
     if(empty($errors)){
-        $req =  $pdo->prepare("INSERT INTO users SET username = ?, password = ?, email = ?");
+        $req =  $pdo->prepare("INSERT INTO users SET username = ?, password = ?, email = ?, confirmation_token = ?");
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $req->execute([$_POST['username'], $password, $_POST['email']]);
+        $token = str_random(60);
+        $req->execute([$_POST['username'], $password, $_POST['email'], $token]);
+        $user_id = $pdo->lastInsertId();
+        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://127.0.0.1/projects/The_Bid/register.php?id=user_id$token=$token");
+        header('Location: login.php');
         die('Notre compte a bien été créé');
     }
-    debug($errors);
+
 }
 
 ?>
 
+    <?php require 'include/header.php'; ?>
 
     <h1>S'inscrire</h1>
 
+    <?php if(!empty($errors)): ?>
+    <div class="alert alert-danger">
+        <p>Vous n'avez pas rempli le formulaire correctement !</p>
+        <ul>
+            <?php foreach($errors as $error): ?>
+                <li><?= $error; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php endif; ?>
     <form action="" method="POST">
 
             <div class="form-group">
