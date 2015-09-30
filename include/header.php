@@ -1,5 +1,9 @@
+<?php
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
 
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">
@@ -10,7 +14,9 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Inscription | The Bid</title>
+
+    <!-- Essayer d'implémenter un input sur le titre du site avec comme path -> "acceuil"-->
+    <title>The Bid</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/site.css" rel="stylesheet">
@@ -33,8 +39,12 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="register.php">Inscription</a></li>
-                <li><a href="login.php">Login</a></li>
+                <?php if (isset($_SESSION['auth'])): ?>
+                    <li><a href="logout.php">Se déconnecter</a></li>
+                <?php else: ?>
+                    <li><a href="register.php">S'inscrire</a></li>
+                    <li><a href="login.php">Se connecter</a></li>
+                <?php endif; ?>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -42,6 +52,11 @@
 
 <div class="container">
 
-
-</body>
-</html>
+    <?php if(isset($_SESSION['flash'])): ?>
+    <?php foreach($_SESSION['flash'] as $type => $message): ?>
+        <div class="alert alert-<?= $type; ?>">
+            <?= $message; ?>
+        </div>
+    <?php endforeach; ?>
+    <?php unset($_SESSION['flash']); ?>
+<?php endif; ?>

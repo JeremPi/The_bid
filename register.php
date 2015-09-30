@@ -1,5 +1,6 @@
 <?php
 require_once 'include/functions.php';
+session_start();
 if(!empty($_POST)){
     $errors = array();
     require_once 'include/db.php';
@@ -12,7 +13,7 @@ if(!empty($_POST)){
         $user = $req->fetch();
 
         if($user){
-            $errors['username'] = 'Ce pseudo est déjà utilisé';
+            $errors['username'] = 'Ce pseudo est dÃ©jÃ  utilisÃ©';
         }
     }
 
@@ -24,12 +25,12 @@ if(!empty($_POST)){
         $user = $req->fetch();
 
         if ($user) {
-            $errors['email'] = 'Cet email à déjà été utilisé';
+            $errors['email'] = 'Cet email Ã  dÃ©jÃ  Ã©tÃ© utilisÃ© pour un autre compte';
         }
     }
 
     if(empty($_POST['password']) || $_POST['password'] != $_POST['password_conf']){
-        $errors['password'] = "Mot de passe invalide";
+        $errors['password'] = "Vous devez rentrer un mot de passe valide";
     }
 
     if(empty($errors)){
@@ -38,9 +39,11 @@ if(!empty($_POST)){
         $token = str_random(60);
         $req->execute([$_POST['username'], $password, $_POST['email'], $token]);
         $user_id = $pdo->lastInsertId();
-        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://127.0.0.1/projects/The_Bid/register.php?id=user_id$token=$token");
+        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://127.0.0.1/project/The_bid/confirm.php?id=$user_id&token=$token");
+        // place pour l'envoie de l'email de validation
+        $_SESSION['flash']['success'] = "Votre compte a bien Ã©tÃ© crÃ©Ã©";
         header('Location: login.php');
-        die('Notre compte a bien été créé');
+        exit();
     }
 
 }
