@@ -39,9 +39,9 @@ if(!empty($_POST)){
         $token = str_random(60);
         $req->execute([$_POST['username'], $password, $_POST['email'], $token]);
         $user_id = $pdo->lastInsertId();
-        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://127.0.0.1/project/The_bid/confirm.php?id=$user_id&token=$token");
+        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien\n\nhttp://localhost/The%20bid/confirm.php?id=$user_id&token=$token");
         // place pour l'envoie de l'email de validation
-        $_SESSION['flash']['success'] = "Votre compte a bien été créé";
+        $_SESSION['flash']['success'] = "Un email de confirmation à été envoyé afin de finaliser la création de votre compte";
         header('Location: login.php');
         exit();
     }
@@ -79,7 +79,7 @@ if(!empty($_POST)){
                 <input type="password" name="password" class="form-control" required/>
             </div>
             <div class="form-group">
-                <label for="">Confirmez votre mot de passe</label>
+                <label for="">Confirmez votre Mot De Passe</label>
                 <input type="password" name="password_conf" class="form-control" required/>
             </div>
 

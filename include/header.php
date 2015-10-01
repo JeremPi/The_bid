@@ -52,6 +52,8 @@ if(session_status() == PHP_SESSION_NONE){
 
 <div class="container">
 
+<?php // Permet d'afficher les messages flash ?>
+
     <?php if(isset($_SESSION['flash'])): ?>
     <?php foreach($_SESSION['flash'] as $type => $message): ?>
         <div class="alert alert-<?= $type; ?>">
