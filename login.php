@@ -1,5 +1,10 @@
 <?php
-
+require_once 'include/functions.php';
+reconnect_from_cookie();
+if(isset($_SESSION['auth'])){
+    header('Location: account.php');
+    exit();
+}
 if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
     require_once 'include/db.php';
     $req = $pdo->prepare('SELECT * FROM users WHERE (username = :username OR email = :username) AND confirmed_at IS NOT NULL');
@@ -10,7 +15,7 @@ if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
         $_SESSION['flash']['success'] = 'Vous êtes maintenant connecté';
         header('Location: account.php');
         exit();
-    }else{
+    } else{
         $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrecte';
     }
 }

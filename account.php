@@ -1,6 +1,7 @@
 <?php
 require 'include/functions.php';
 logged_only();
+require 'include/header.php';
 if(!empty($_POST)){
 
     if(empty($_POST['password']) || $_POST['password'] != $_POST['password_confirm']){
